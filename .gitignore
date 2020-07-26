@@ -1,0 +1,7 @@
+*~
+.cache
+crash.log
+.env
+.idea/
+tmp/
+_tmp/
