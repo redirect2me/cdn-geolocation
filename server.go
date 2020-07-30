@@ -75,10 +75,19 @@ func main() {
 	}
 
 	http.HandleFunc("/status.json", statusHandler)
+	http.HandleFunc(*aeHostname+"/status.json", statusHandler)
+	http.HandleFunc(*cfHostname+"/status.json", statusHandler)
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/robots.txt", robotsTxtHandler)
+	http.HandleFunc(*aeHostname+"/robots.txt", robotsTxtHandler)
+	http.HandleFunc(*cfHostname+"/robots.txt", robotsTxtHandler)
 	http.HandleFunc("/favicon.ico", faviconIcoHandler)
+	http.HandleFunc(*aeHostname+"/favicon.ico", faviconIcoHandler)
+	http.HandleFunc(*cfHostname+"/favicon.ico", faviconIcoHandler)
 	http.HandleFunc("/favicon.svg", faviconSvgHandler)
+	http.HandleFunc(*aeHostname+"/favicon.svg", faviconSvgHandler)
+	http.HandleFunc(*cfHostname+"/favicon.svg", faviconSvgHandler)
+
 	http.HandleFunc(*aeHostname+"/api/appengine.json", appengineApiHandler)
 	http.HandleFunc(*aeHostname+"/", appengineRootHandler)
 	http.HandleFunc(*cfHostname+"/api/cloudflare.json", cloudflareApiHandler)

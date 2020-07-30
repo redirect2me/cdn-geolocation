@@ -8,21 +8,18 @@ import (
 	"time"
 )
 
-var COMMIT string;
-var LASTMOD string;
-
 type Status struct {
-	Success  bool		`json:"success"`
-	Message  string		`json:"message"`
-	Commit   string     `json:"commit"`
-	LastMod  string     `json:"lastmod"`
-	Timestamp  string   `json:"timestamp"`
-	Tech     string     `json:"tech"`
-	Version  string		`json:"version"`
-	Getwd    string     `json:"os.Getwd"`
-    Hostname string     `json:"os.Hostname"`
-    Seconds  int64      `json:"os.Time.Now().Unix()"`
-    TempDir  string     `json:"os.TempDir"`
+	Success   bool   `json:"success"`
+	Message   string `json:"message"`
+	Commit    string `json:"commit"`
+	LastMod   string `json:"lastmod"`
+	Timestamp string `json:"timestamp"`
+	Tech      string `json:"tech"`
+	Version   string `json:"version"`
+	Getwd     string `json:"os.Getwd"`
+	Hostname  string `json:"os.Hostname"`
+	Seconds   int64  `json:"os.Time.Now().Unix()"`
+	TempDir   string `json:"os.TempDir"`
 }
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,10 +27,10 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	status := Status{}
 
 	status.Success = true
-    status.Message = "OK"
-    status.Timestamp = time.Now().UTC().Format(time.RFC3339)
-    status.Commit = COMMIT;
-    status.LastMod = LASTMOD;
+	status.Message = "OK"
+	status.Timestamp = time.Now().UTC().Format(time.RFC3339)
+	status.Commit = os.Getenv("COMMIT")
+	status.LastMod = os.Getenv("LASTMOD")
 	status.Tech = runtime.Version()
 
 	status.Getwd, err = os.Getwd()
@@ -50,7 +47,7 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	status.Version = runtime.Version()
 	status.Seconds = time.Now().Unix()
 
-	callback := r.FormValue("callback");
+	callback := r.FormValue("callback")
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -72,5 +69,3 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(b)
 	}
 }
-
-
