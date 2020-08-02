@@ -22,7 +22,7 @@ Contributions are welcome!  If you know of any other similar CDNs/services, let 
 
 ## API
 
-There is a simple JSON/JSONP API that is free for light, non-commercial use.  This is such a trivial application that you should run your own copy (or make your own  version) for anything serious.
+There is a simple JSON/JSONP API that is free for light, non-commercial use.  This is such a trivial application that you should run your own copy (or make your own  version) for anything serious.  Both AppEngine and Cloudflare have generous free plans (which is what I'm using).
 
 Send a `callback` parameter to get JSONP instead of JSON.
 
