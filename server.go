@@ -47,10 +47,6 @@ func faviconIcoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(faviconIco)
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "https://resolve.rs/ip/geolocation.html", http.StatusTemporaryRedirect)
-}
-
 func getHeader(r *http.Request, key string, defaultValue string) string {
 	retVal := r.Header.Get(key)
 	if retVal == "" {
@@ -58,6 +54,20 @@ func getHeader(r *http.Request, key string, defaultValue string) string {
 	}
 
 	return retVal
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path[1:] == "" {
+		if r.Host == *aeHostname {
+			appengineRootHandler(w, r)
+		} else if r.Host == *cfHostname {
+			cloudflareRootHandler(w, r)
+		} else {
+			http.Redirect(w, r, "https://github.com/redirect2me/cdn-geolocation", http.StatusTemporaryRedirect)
+		}
+	} else {
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	}
 }
 
 func main() {
@@ -75,23 +85,13 @@ func main() {
 	}
 
 	http.HandleFunc("/status.json", statusHandler)
-	http.HandleFunc(*aeHostname+"/status.json", statusHandler)
-	http.HandleFunc(*cfHostname+"/status.json", statusHandler)
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/robots.txt", robotsTxtHandler)
-	http.HandleFunc(*aeHostname+"/robots.txt", robotsTxtHandler)
-	http.HandleFunc(*cfHostname+"/robots.txt", robotsTxtHandler)
 	http.HandleFunc("/favicon.ico", faviconIcoHandler)
-	http.HandleFunc(*aeHostname+"/favicon.ico", faviconIcoHandler)
-	http.HandleFunc(*cfHostname+"/favicon.ico", faviconIcoHandler)
 	http.HandleFunc("/favicon.svg", faviconSvgHandler)
-	http.HandleFunc(*aeHostname+"/favicon.svg", faviconSvgHandler)
-	http.HandleFunc(*cfHostname+"/favicon.svg", faviconSvgHandler)
 
-	http.HandleFunc(*aeHostname+"/api/appengine.json", appengineApiHandler)
-	http.HandleFunc(*aeHostname+"/", appengineRootHandler)
-	http.HandleFunc(*cfHostname+"/api/cloudflare.json", cloudflareApiHandler)
-	http.HandleFunc(*cfHostname+"/", cloudflareRootHandler)
+	http.HandleFunc("/api/appengine.json", appengineApiHandler)
+	http.HandleFunc("/api/cloudflare.json", cloudflareApiHandler)
 
 	if *verbose {
 		logger.Printf("INFO: running on port %d\n", *port)

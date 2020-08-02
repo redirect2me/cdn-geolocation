@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -26,8 +27,10 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
             Determine which location based on your IP address, powered by Google AppEngine.
         </p>
 		<p>
-            Your Location:<br/>`))
+            Your IP address:`))
 
+		fmt.Fprintf(w, "%s", getIpAddress(r))
+		fmt.Fprintf(w, "</p><p>")
 		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-Country", "(none)")))
 		fmt.Fprintf(w, "Region: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-Region", "(none)")))
 		fmt.Fprintf(w, "City: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-City", "(none)")))
@@ -59,19 +62,29 @@ type ApiResponse struct {
 	Country   string `json:"country"`
 	Region    string `json:"region"`
 	City      string `json:"city"`
-	LatLng    string `json:"latlng"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
+	IpAddress string `json:"ip"`
 }
 
 func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := ApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
+	result.IpAddress = getIpAddress(r)
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
 	result.Country = getHeader(r, "X-Appengine-Country", "(not set)")
 	result.City = getHeader(r, "X-Appengine-City", "(not set)")
 	result.Region = getHeader(r, "X-Appengine-Region", "(not set)")
-	result.LatLng = getHeader(r, "X-Appengine-CityLatLong", "(not set)")
+	latlng := r.Header.Get("X-Appengine-CityLatLong")
+	if latlng != "" {
+		comma := strings.Index(latlng, ",")
+		if comma != -1 {
+			result.Latitude = latlng[0:comma]
+			result.Longitude = latlng[comma:len(latlng)]
+		}
+	}
 	write_with_callback(w, r, result)
 
 }

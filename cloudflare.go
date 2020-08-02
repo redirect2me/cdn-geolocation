@@ -7,6 +7,7 @@ import (
 
 	"fmt"
 	"html"
+	"strings"
 	"time"
 
 	//	"io/ioutil"
@@ -16,6 +17,10 @@ import (
 	//	"net/url"
 	//	"strings"
 )
+
+func getIpAddress(r *http.Request) string {
+	return strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
+}
 
 func cloudflareRootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path[1:] == "" {
@@ -36,7 +41,10 @@ func cloudflareRootHandler(w http.ResponseWriter, r *http.Request) {
             Determine your real (physical) location based on your IP address, powered by CloudFlare.
         </p>
 		<p>
-            Your Location:<br/>`))
+            Your IP address:`))
+
+		fmt.Fprintf(w, "%s", getIpAddress(r))
+		fmt.Fprintf(w, "</p><p>")
 
 		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "CF-IPCountry", "(none)")))
 
@@ -64,11 +72,13 @@ type apiResponse struct {
 	Message   string `json:"message"`
 	Timestamp string `json:"timestamp"`
 	Country   string `json:"country"`
+	IpAddress string `json:"ip"`
 }
 
 func cloudflareApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := apiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
+	result.IpAddress = getIpAddress(r)
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
