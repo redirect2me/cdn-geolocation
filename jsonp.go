@@ -7,20 +7,13 @@ import (
 
 func write_with_callback(w http.ResponseWriter, r *http.Request, v interface{}) {
 
-	callback := r.FormValue("callback")
-
-	w.Header().Set("Content-Type", "text/plain; charset=utf8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
-	w.Header().Set("Access-Control-Max-Age", "604800") // 1 week
+	callback := r.URL.Query().Get("callback")
 
 	var b []byte
 	var err error
 	b, err = json.Marshal(v)
 	if err != nil {
-		b = []byte("{\"success\":false,\"html\":\"<p>json.Marshal failed</p>\"}")
-		//http.Error(w, err.Error(), http.StatusInternalServerError)
-		//return
+		b = []byte("{\"success\":false,\"message\":\"json.Marshal failed\"}")
 	}
 
 	if callback > "" {
@@ -31,6 +24,9 @@ func write_with_callback(w http.ResponseWriter, r *http.Request, v interface{}) 
 		w.Write([]byte(");"))
 	} else {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+		w.Header().Set("Access-Control-Max-Age", "604800") // 1 week
 		w.Write(b)
 	}
 }
