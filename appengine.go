@@ -38,16 +38,15 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
 		//LATER: hyperlink to map
 		w.Write([]byte(`</p>
         <p>
-            <a href="https://github.com/redirect2me/appengine-geolocation">How this works</a>, including API details and source code!
+            <a href="https://github.com/redirect2me/cdn-geolocation">How this works</a>, including API details and source code!
         </p>
         <p>
-            <a href="https://resolve.rs/">resolve.rs</a>
+            <a href="https://resolve.rs/">Resolve.rs</a>
             has more
             <a href="https://resolve.rs/tools.html">diagnostic tools</a>.
             including a
             <a href="https://resolve.rs/ip/geolocation.html">comparison of different geolocation APIs</a>.
         </p>
-		<script>
 	</body>
 </html>`))
 	} else {

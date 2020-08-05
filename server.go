@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	verbose    = flag.Bool("verbose", true, "verbose logging")
-	aeHostname = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
-	cfHostname = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
+	verbose     = flag.Bool("verbose", true, "verbose logging")
+	aeHostname  = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
+	cfHostname  = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
+	awsHostname = flag.String("awshost", "aws-geo.redirect2.me", "hostname for AWS CloudFront")
 
 	logger = log.New(os.Stdout, "R2ME-GEO: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.LUTC)
 )
@@ -62,6 +63,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 			appengineRootHandler(w, r)
 		} else if r.Host == *cfHostname {
 			cloudflareRootHandler(w, r)
+		} else if r.Host == *awsHostname {
+			awsRootHandler(w, r)
 		} else {
 			http.Redirect(w, r, "https://github.com/redirect2me/cdn-geolocation", http.StatusTemporaryRedirect)
 		}
@@ -92,6 +95,7 @@ func main() {
 
 	http.HandleFunc("/api/appengine.json", appengineApiHandler)
 	http.HandleFunc("/api/cloudflare.json", cloudflareApiHandler)
+	http.HandleFunc("/api/aws.json", awsApiHandler)
 
 	if *verbose {
 		logger.Printf("INFO: running on port %d\n", *port)

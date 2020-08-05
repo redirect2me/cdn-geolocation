@@ -2,19 +2,23 @@
 
 Server that determines your physical location by looking at headers sent from various hosting providers and content delivery networks (CDNs).
 
-<a href="https://ae-geo.redirect2.me/">Try it with Google AppEngine</a>.
+[Try it with AWS CloudFront](https://aws-geo.redirect2.me/)
 
-<a href="https://cf-geo.redirect2.me/">Try it with Cloudflare</a>.
+[Try it with Cloudflare](https://cf-geo.redirect2.me/)
 
-<a href="https://resolve.rs/ip/geolocation.html">Comparison of geolocation providers</a>.
+[Try it with Google AppEngine](https://ae-geo.redirect2.me/)
+
+[Comparison of geolocation providers](https://resolve.rs/ip/geolocation.html)
 
 ## How it works
 
 This application is just a simple app that shows various HTTP header values.
 
-Applications running on [Google AppEngine](https://cloud.google.com/appengine) get some additional HTTP headers that pinpoint the client's location: [Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
+Applications running behind [AWS CloudFront](https://aws.amazon.com/cloudfront/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
 
 Applications running behind [Cloudflare's CDN](https://www.cloudflare.com/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
+
+Applications running on [Google AppEngine](https://cloud.google.com/appengine) get some additional HTTP headers that pinpoint the client's location: [Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
 
 ## Contributions
 
@@ -26,9 +30,11 @@ There is a simple JSON/JSONP API that is free for light, non-commercial use.  Th
 
 Send a `callback` parameter to get JSONP instead of JSON.
 
+`https://aws-geo.redirect2.me/api/aws.json` for AWS CloudFront results
+
 `https://cf-geo.redirect2.me/api/cloudflare.json` for Cloudflare results
 
-`https://ae-geo.redirect2.me/api/appengine.json` for AppEngine results
+`https://ae-geo.redirect2.me/api/appengine.json` for Google AppEngine results
 
 ## License
 

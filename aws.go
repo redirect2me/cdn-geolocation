@@ -17,23 +17,23 @@ import (
 	//	"strings"
 )
 
-func cloudflareRootHandler(w http.ResponseWriter, r *http.Request) {
+func awsRootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path[1:] == "" {
 		w.Header().Set("Content-Type", "text/html; charset=utf8")
 		w.Write([]byte(`<html>
 	<head>
     <meta charset="utf-8">
-        <title>CloudFlare Geolocation - Resolve.rs</title>
+        <title>Amazon AWS CloudFront Geolocation - Resolve.rs</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css" />
 	</head>
     <body>
         <h1>
             <img alt="Resolve.rs geolocation logo" src="favicon.svg" style="height:2.2em;vertical-align:middle;" />
-            CloudFlare Geolocation
+            AWS CloudFront Geolocation
         </h1>
         <p>
-            Determine your real (physical) location based on your IP address, powered by CloudFlare.
+            Determine your real (physical) location based on your IP address, powered by AWS CloudFront.
         </p>
 		<p>
             Your IP address:`))
@@ -41,7 +41,7 @@ func cloudflareRootHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", getIpAddress(r))
 		fmt.Fprintf(w, "</p><p>")
 
-		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "CF-IPCountry", "(none)")))
+		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "CloudFront-Viewer-Country", "(none)")))
 
 		w.Write([]byte(`</p>
         <p>
@@ -61,21 +61,13 @@ func cloudflareRootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type apiResponse struct {
-	Success   bool   `json:"success"`
-	Message   string `json:"message"`
-	Timestamp string `json:"timestamp"`
-	Country   string `json:"country"`
-	IpAddress string `json:"ip"`
-}
-
-func cloudflareApiHandler(w http.ResponseWriter, r *http.Request) {
+func awsApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := apiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
-	result.Country = getHeader(r, "CF-IPCountry", "(not set)")
+	result.Country = getHeader(r, "CloudFront-Viewer-Country", "(not set)")
 	write_with_callback(w, r, result)
 }
