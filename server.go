@@ -20,7 +20,7 @@ var (
 	verbose     = flag.Bool("verbose", true, "verbose logging")
 	aeHostname  = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
 	cfHostname  = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
-	awsHostname = flag.String("awshost", "aws-geo.redirect2.me", "hostname for AWS CloudFront")
+	awsHostname = flag.String("awshost", "origin-aws-geo.redirect2.me", "origin hostname for AWS CloudFront (not the actual hostname)")
 
 	logger = log.New(os.Stdout, "R2ME-GEO: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.LUTC)
 )
