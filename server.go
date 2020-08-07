@@ -92,10 +92,12 @@ func main() {
 	http.HandleFunc("/robots.txt", robotsTxtHandler)
 	http.HandleFunc("/favicon.ico", faviconIcoHandler)
 	http.HandleFunc("/favicon.svg", faviconSvgHandler)
+	http.HandleFunc("/headers.html", headersHandler)
 
 	http.HandleFunc("/api/appengine.json", appengineApiHandler)
 	http.HandleFunc("/api/cloudflare.json", cloudflareApiHandler)
 	http.HandleFunc("/api/aws.json", awsApiHandler)
+	http.HandleFunc("/api/headers.json", headersApiHandler)
 
 	if *verbose {
 		logger.Printf("INFO: running on port %d\n", *port)

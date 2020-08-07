@@ -11,7 +11,7 @@ func write_with_callback(w http.ResponseWriter, r *http.Request, v interface{}) 
 
 	var b []byte
 	var err error
-	b, err = json.Marshal(v)
+	b, err = json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		b = []byte("{\"success\":false,\"message\":\"json.Marshal failed\"}")
 	}
