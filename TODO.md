@@ -1,7 +1,6 @@
 # To do
 
-- include IP address in result
+- if header not present, then success: false 
 - logging
 - caching headers
-- deploy with GithubAction
-- commit and lastmod in status.json
+- raw value should only include relevant headers (by prefix: Cf-, X-Appengine-, Cloudfront-)
