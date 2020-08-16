@@ -54,22 +54,25 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type ApiResponse struct {
-	Success   bool   `json:"success"`
-	Message   string `json:"message"`
-	Timestamp string `json:"timestamp"`
-	Country   string `json:"country"`
-	Region    string `json:"region"`
-	City      string `json:"city"`
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	IpAddress string `json:"ip"`
+type appengineApiResponse struct {
+	Success   bool                `json:"success"`
+	Message   string              `json:"message"`
+	Timestamp string              `json:"timestamp"`
+	IpAddress string              `json:"ip"`
+	Country   string              `json:"country"`
+	Text      string              `json:"text"`
+	Region    string              `json:"region"`
+	City      string              `json:"city"`
+	Latitude  string              `json:"latitude"`
+	Longitude string              `json:"longitude"`
+	Raw       map[string][]string `json:"raw"`
 }
 
 func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
-	result := ApiResponse{}
+	result := appengineApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
+	result.Raw = getHeaders(r)
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"

@@ -92,9 +92,7 @@ func headersApiHandler(w http.ResponseWriter, r *http.Request) {
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
 
-	result.Headers = make(map[string][]string)
-	for name, values := range r.Header {
-		result.Headers[name] = values
-	}
+	result.Headers = getHeaders(r)
+
 	write_with_callback(w, r, result)
 }
