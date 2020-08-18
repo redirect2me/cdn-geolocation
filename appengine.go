@@ -55,30 +55,31 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type appengineApiResponse struct {
-	Success   bool                `json:"success"`
-	Message   string              `json:"message"`
-	Timestamp string              `json:"timestamp"`
-	IpAddress string              `json:"ip"`
-	Country   string              `json:"country"`
-	Text      string              `json:"text"`
-	Region    string              `json:"region"`
-	City      string              `json:"city"`
-	Latitude  string              `json:"latitude"`
-	Longitude string              `json:"longitude"`
-	Raw       map[string][]string `json:"raw"`
+	Success   bool              `json:"success"`
+	Message   string            `json:"message"`
+	Timestamp string            `json:"timestamp"`
+	IpAddress string            `json:"ip"`
+	Country   string            `json:"country"`
+	Text      string            `json:"text"`
+	Region    string            `json:"region"`
+	City      string            `json:"city"`
+	Latitude  string            `json:"latitude"`
+	Longitude string            `json:"longitude"`
+	Raw       map[string]string `json:"raw"`
 }
 
 func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := appengineApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
-	result.Raw = getHeaders(r)
+	result.Raw = getFlatHeaders(r, "X-Appengine-")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
 	result.Country = getHeader(r, "X-Appengine-Country", "(not set)")
-	result.City = getHeader(r, "X-Appengine-City", "(not set)")
-	result.Region = getHeader(r, "X-Appengine-Region", "(not set)")
+	city := getHeader(r, "X-Appengine-City", "(not set)")
+	region := getHeader(r, "X-Appengine-Region", "(not set)")
+	result.Text = fmt.Sprintf("%s, %s, %s", city, region, result.Country)
 	latlng := r.Header.Get("X-Appengine-CityLatLong")
 	if latlng != "" {
 		comma := strings.Index(latlng, ",")

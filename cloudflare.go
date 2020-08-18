@@ -68,14 +68,14 @@ type cfApiResponse struct {
 	IpAddress string              `json:"ip"`
 	Country   string              `json:"country"`
 	Text      string              `json:"text"`
-	Raw       map[string][]string `json:"raw"`
+	Raw       map[string]string `json:"raw"`
 }
 
 func cloudflareApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := cfApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
-	result.Raw = getHeaders(r)
+	result.Raw = getFlatHeaders(r, "CF-")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"

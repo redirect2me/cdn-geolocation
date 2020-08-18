@@ -22,6 +22,18 @@ func getIpAddress(r *http.Request) string {
 	return ip
 }
 
+func getFlatHeaders(r *http.Request, prefix string) map[string]string {
+
+	result := make(map[string]string)
+	for name, values := range r.Header {
+		if strings.HasPrefix(name, prefix) {
+			result[name] = values[0]
+		}
+	}
+
+	return result
+}
+
 func getHeaders(r *http.Request) map[string][]string {
 
 	result := make(map[string][]string)

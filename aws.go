@@ -60,20 +60,22 @@ func awsRootHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 }
+
 type awsApiResponse struct {
-	Success   bool   `json:"success"`
-	Message   string `json:"message"`
-	Timestamp string `json:"timestamp"`
-	IpAddress string `json:"ip"`
-	Country   string `json:"country"`
-	Text      string `json:"text"`
-	Raw       map[string][]string `json:"raw"`
+	Success   bool              `json:"success"`
+	Message   string            `json:"message"`
+	Timestamp string            `json:"timestamp"`
+	IpAddress string            `json:"ip"`
+	Country   string            `json:"country"`
+	Text      string            `json:"text"`
+	Raw       map[string]string `json:"raw"`
 }
 
 func awsApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := awsApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
+	result.Raw = getFlatHeaders(r, "CloudFront-")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
