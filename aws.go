@@ -75,7 +75,7 @@ func awsApiHandler(w http.ResponseWriter, r *http.Request) {
 	result := awsApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
-	result.Raw = getFlatHeaders(r, "CloudFront-")
+	result.Raw = getFlatHeaders(r, "Cloudfront-")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
