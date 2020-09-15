@@ -21,6 +21,7 @@ var (
 	aeHostname  = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
 	cfHostname  = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
 	awsHostname = flag.String("awshost", "origin-aws-geo.redirect2.me", "origin hostname for AWS CloudFront (not the actual hostname)")
+	fastlyHostname = flag.String("fastlyhost", "origin-fastly-geo.redirect2.me", "origin hostname for Fastly (not the actual hostname)")
 
 	logger = log.New(os.Stdout, "R2ME-GEO: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.LUTC)
 )
@@ -63,6 +64,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 			appengineRootHandler(w, r)
 		} else if r.Host == *cfHostname {
 			cloudflareRootHandler(w, r)
+		} else if r.Host == *fastlyHostname {
+			fastlyRootHandler(w, r)
 		} else if r.Host == *awsHostname {
 			awsRootHandler(w, r)
 		} else {
@@ -96,6 +99,7 @@ func main() {
 
 	http.HandleFunc("/api/appengine.json", appengineApiHandler)
 	http.HandleFunc("/api/cloudflare.json", cloudflareApiHandler)
+	http.HandleFunc("/api/fastly.json", fastlyApiHandler)
 	http.HandleFunc("/api/aws.json", awsApiHandler)
 	http.HandleFunc("/api/headers.json", headersApiHandler)
 

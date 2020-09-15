@@ -4,37 +4,38 @@ import (
 	"fmt"
 	"html"
 	"net/http"
-	"strings"
 	"time"
 )
 
-func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
+func fastlyRootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path[1:] == "" {
 		w.Header().Set("Content-Type", "text/html; charset=utf8")
 		w.Write([]byte(`<html>
 	<head>
     <meta charset="utf-8">
-        <title>AppEngine Geolocation - Resolve.rs</title>
+        <title>Fastly Geolocation - Resolve.rs</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css" />
 	</head>
     <body>
         <h1>
             <img alt="Resolve.rs geolocation logo" src="favicon.svg" style="height:2.2em;vertical-align:middle;" />
-            AppEngine Geolocation
+            Fastly Geolocation
         </h1>
         <p>
-			Determine your real (physical) location based on your IP address, powered by Google AppEngine.
+			Determine your real (physical) location based on your IP address, powered by Fastly.
         </p>
 		<p>
             Your IP address:`))
 
 		fmt.Fprintf(w, "%s", getIpAddress(r))
 		fmt.Fprintf(w, "</p><p>")
-		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-Country", "(none)")))
-		fmt.Fprintf(w, "Region: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-Region", "(none)")))
-		fmt.Fprintf(w, "City: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-City", "(none)")))
-		fmt.Fprintf(w, "Latitude/Longitude: %s<br/>", html.EscapeString(getHeader(r, "X-Appengine-CityLatLong", "(none)")))
+		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-Country-Name-Utf8", "(none)")))
+		fmt.Fprintf(w, "Region: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-Region-Utf8", "(none)")))
+		fmt.Fprintf(w, "City: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-City-Utf8", "(none)")))
+		fmt.Fprintf(w, "Latitude/Longitude: %s,%s<br/>", 
+			html.EscapeString(getHeader(r, "X-Fastly-Geo-Latitude", "(none)")),
+			html.EscapeString(getHeader(r, "X-Fastly-Geo-Longitude", "(none)")))
 		//LATER: hyperlink to map
 		w.Write([]byte(`</p>
         <p>
@@ -54,7 +55,7 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type appengineApiResponse struct {
+type fastlyApiResponse struct {
 	Success   bool              `json:"success"`
 	Message   string            `json:"message"`
 	Timestamp string            `json:"timestamp"`
@@ -68,26 +69,21 @@ type appengineApiResponse struct {
 	Raw       map[string]string `json:"raw"`
 }
 
-func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
-	result := appengineApiResponse{}
+func fastlyApiHandler(w http.ResponseWriter, r *http.Request) {
+	result := fastlyApiResponse{}
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
-	result.Raw = getFlatHeaders(r, "X-Appengine-")
+	result.Raw = getFlatHeaders(r, "X-Fastly-Geo-")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
-	result.Country = getHeader(r, "X-Appengine-Country", "(not set)")
-	city := getHeader(r, "X-Appengine-City", "(not set)")
-	region := getHeader(r, "X-Appengine-Region", "(not set)")
-	result.Text = fmt.Sprintf("%s, %s, %s", city, region, result.Country)
-	latlng := r.Header.Get("X-Appengine-CityLatLong")
-	if latlng != "" {
-		comma := strings.Index(latlng, ",")
-		if comma != -1 {
-			result.Latitude = latlng[0:comma]
-			result.Longitude = latlng[comma:len(latlng)]
-		}
-	}
+	result.Country = getHeader(r, "X-Fastly-Geo-Country-Code", "(not set)")
+	city := getHeader(r, "X-Fastly-Geo-City-Utf8", "(not set)")
+	region := getHeader(r, "X-Fastly-Geo-Region-Utf8", "(not set)")
+	country := getHeader(r, "X-Fastly-Geo-Country-Name-Utf8", "(not set)")
+	result.Text = fmt.Sprintf("%s, %s, %s", city, region, country)
+	result.Latitude = r.Header.Get("X-Fastly-Geo-Latitude")
+	result.Longitude = r.Header.Get("X-Fastly-Geo-Longitude")
 	write_with_callback(w, r, result)
 
 }

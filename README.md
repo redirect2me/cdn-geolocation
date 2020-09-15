@@ -6,6 +6,8 @@ Server that determines your physical location by looking at headers sent from va
 
 [Try it with Cloudflare](https://cf-geo.redirect2.me/)
 
+[Try it with Fastly](http://fastly-geo.redirect2.me/)
+
 [Try it with Google AppEngine](https://ae-geo.redirect2.me/)
 
 [Comparison of geolocation providers](https://resolve.rs/ip/geolocation.html)
@@ -17,6 +19,8 @@ This application is just a simple app that shows various HTTP header values.
 Applications running behind [AWS CloudFront](https://aws.amazon.com/cloudfront/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
 
 Applications running behind [Cloudflare's CDN](https://www.cloudflare.com/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
+
+Applications running behind [Fastly](https://www.fastly.com/) can set additional headers with geolocation data: [Official documentation](https://developer.fastly.com/reference/vcl/variables/geolocation/)
 
 Applications running on [Google AppEngine](https://cloud.google.com/appengine) get some additional HTTP headers that pinpoint the client's location: [Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
 
