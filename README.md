@@ -14,7 +14,52 @@ Also see a more detailed [comparison of geolocation providers](https://resolve.r
 
 This application is just a simple app that shows various HTTP header values.
 
+## Running it yourself
 
+It is a trivial go application.  `go run *.go` should work.  The real functionality is from the providers.  Here are links and tips on how to set them up.
+
+<details>
+<summary>AWS CloudFront</summary>
+
+[Website](https://aws.amazon.com/cloudfront/) |
+[Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
+
+In Behaviors, make sure you have whitelisted the `CloudFront-Viewer-Country` header:
+
+<img alt="cloudfront headers whitelist" src="assets/cloudfront-headers.png" height="287" width="900" />
+</details>
+
+<details>
+<summary>Cloudflare</summary>
+
+[Website](https://www.cloudflare.com/) |
+[Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
+
+Very easy to setup: just make sure you have enabled the CloudFlare proxy in your Cloudflare DNS settings.  The little cloud has to be orange:
+
+<img alt="cloudflare proxy enabled" src="assets/cloudflare-proxied.png" height="31" width="175" />
+</details>
+<details>
+<summary>Fastly</summary>
+
+[Website](https://www.fastly.com/) |
+[Official documentation](https://developer.fastly.com/reference/vcl/variables/geolocation/)
+
+You need to configure each header.
+
+Fastly's free tier only allows http for custom domains.  If you need https, you either have to pay or use the Fastly domain `.global.ssl.fastly.net`.
+
+<!-- LATER: example VCL -->
+</details>
+
+<details>
+<summary>Google AppEngine</summary>
+
+[Website](https://cloud.google.com/appengine) |
+[Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
+
+No special setup required, but your app has to be running on Google AppEngine.
+</details>
 
 ## Contributions
 
@@ -49,38 +94,3 @@ Send a `callback` parameter to get JSONP instead of JSON.
 
 * togo `go run github.com/flazz/togo --pkg=main --name=faviconIco --input=assets/favicon.ico`
 
-## Provider Setup
-
-The real functionality is from the providers.  Here are links and tips on how to set them up.
-
-### [AWS CloudFront](https://aws.amazon.com/cloudfront/)
-
-[Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
-
-In Behaviors, make sure you have whitelisted the `CloudFront-Viewer-Country` header:
-
-<img alt="cloudfront headers whitelist" src="assets/cloudfront-headers.png" height="287" width="900" />
-
-### [Cloudflare](https://www.cloudflare.com/)
-
-[Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
-
-Very easy to setup: just make sure you have enabled the CloudFlare proxy in your Cloudflare DNS settings.  The little cloud has to be orange:
-
-<img alt="cloudflare proxy enabled" src="assets/cloudflare-proxied.png" height="31" width="175" />
-
-### [Fastly](https://www.fastly.com/)
-
-[Official documentation](https://developer.fastly.com/reference/vcl/variables/geolocation/)
-
-You need to configure each header.
-
-Fastly's free tier only allows http for custom domains.  If you need https, you either have to pay or use the Fastly domain `.global.ssl.fastly.net`.
-
-<!-- LATER: example VCL -->
-
-### [Google AppEngine](https://cloud.google.com/appengine)
-
-[Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
-
-No special setup required, but your app has to be running on Google AppEngine.

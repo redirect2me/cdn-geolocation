@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+func getHost(r *http.Request) string {
+	host := r.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = r.Host
+	}
+	return host
+}
+
 func getIpAddress(r *http.Request) string {
 	ip := strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
 

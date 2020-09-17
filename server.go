@@ -17,11 +17,11 @@ import (
 )
 
 var (
-	verbose     = flag.Bool("verbose", true, "verbose logging")
-	aeHostname  = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
-	cfHostname  = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
-	awsHostname = flag.String("awshost", "origin-aws-geo.redirect2.me", "origin hostname for AWS CloudFront (not the actual hostname)")
-	fastlyHostname = flag.String("fastlyhost", "origin-fastly-geo.redirect2.me", "origin hostname for Fastly (not the actual hostname)")
+	verbose        = flag.Bool("verbose", true, "verbose logging")
+	aeHostname     = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
+	cfHostname     = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
+	awsHostname    = flag.String("awshost", "origin-aws-geo.redirect2.me", "origin hostname for AWS CloudFront (not the actual hostname)")
+	fastlyHostname = flag.String("fastlyhost", "cdn-geo.global.ssl.fastly.net", "hostname for Fastly")
 
 	logger = log.New(os.Stdout, "R2ME-GEO: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.LUTC)
 )
@@ -59,19 +59,22 @@ func getHeader(r *http.Request, key string, defaultValue string) string {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
+	host := getHost(r)
 	if r.URL.Path[1:] == "" {
-		if r.Host == *aeHostname {
+		if host == *aeHostname {
 			appengineRootHandler(w, r)
-		} else if r.Host == *cfHostname {
+		} else if host == *cfHostname {
 			cloudflareRootHandler(w, r)
-		} else if r.Host == *fastlyHostname {
+		} else if host == *fastlyHostname {
 			fastlyRootHandler(w, r)
-		} else if r.Host == *awsHostname {
+		} else if host == *awsHostname {
 			awsRootHandler(w, r)
 		} else {
+			logger.Printf("WARN: unknown host '%s'\n", host)
 			http.Redirect(w, r, "https://github.com/redirect2me/cdn-geolocation", http.StatusTemporaryRedirect)
 		}
 	} else {
+		logger.Printf("WARN: unknown page '%s' from '%s' on '%s'\n", r.URL.Path, getHeader(r, "Referer", "(no referrer)"), host)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 }

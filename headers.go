@@ -7,6 +7,7 @@ import (
 
 	"fmt"
 	"html"
+	"net"
 	"time"
 
 	//	"io/ioutil"
@@ -35,11 +36,17 @@ func headersHandler(w http.ResponseWriter, r *http.Request) {
             These are the HTTP headers seen by this server.
         </p>
 		<p>
-            Your IP address:`))
+            Raw IP address:`))
 
+	rawIp, _, _ := net.SplitHostPort(r.RemoteAddr)
+
+	fmt.Fprintf(w, "%s", rawIp)
+	w.Write([]byte(`<br/>Calculated IP address: `))
 	fmt.Fprintf(w, "%s", getIpAddress(r))
-	w.Write([]byte(`<br/>Host: `))
-	fmt.Fprintf(w, "%s", r.Host)
+	w.Write([]byte(`<br/>Raw Host: `))
+	fmt.Fprintf(w, "%s", html.EscapeString(r.Host))
+	w.Write([]byte(`<br/>Calculated Host: `))
+	fmt.Fprintf(w, "%s", html.EscapeString(getHost(r)))
 	w.Write([]byte(`</p>
 		<table>
 			<thead>
