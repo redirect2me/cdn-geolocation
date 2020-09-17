@@ -2,27 +2,19 @@
 
 Server that determines your physical location by looking at headers sent from various hosting providers and content delivery networks (CDNs).
 
-[Try it with AWS CloudFront](https://aws-geo.redirect2.me/)
+Try it with:
+[AWS CloudFront](https://aws-geo.redirect2.me/)
+| [Cloudflare](https://cf-geo.redirect2.me/)
+| [Fastly](https://cdn-geo.global.ssl.fastly.net/)
+| [Google AppEngine](https://ae-geo.redirect2.me/)
 
-[Try it with Cloudflare](https://cf-geo.redirect2.me/)
-
-[Try it with Fastly](http://fastly-geo.redirect2.me/)
-
-[Try it with Google AppEngine](https://ae-geo.redirect2.me/)
-
-[Comparison of geolocation providers](https://resolve.rs/ip/geolocation.html)
+Also see a more detailed [comparison of geolocation providers](https://resolve.rs/ip/geolocation.html)
 
 ## How it works
 
 This application is just a simple app that shows various HTTP header values.
 
-Applications running behind [AWS CloudFront](https://aws.amazon.com/cloudfront/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
 
-Applications running behind [Cloudflare's CDN](https://www.cloudflare.com/) gets some additional HTTP headers, including one that indicates the country,  [Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
-
-Applications running behind [Fastly](https://www.fastly.com/) can set additional headers with geolocation data: [Official documentation](https://developer.fastly.com/reference/vcl/variables/geolocation/)
-
-Applications running on [Google AppEngine](https://cloud.google.com/appengine) get some additional HTTP headers that pinpoint the client's location: [Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
 
 ## Contributions
 
@@ -34,11 +26,10 @@ There is a simple JSON/JSONP API that is free for light, non-commercial use.  Th
 
 Send a `callback` parameter to get JSONP instead of JSON.
 
-`https://aws-geo.redirect2.me/api/aws.json` for AWS CloudFront results
-
-`https://cf-geo.redirect2.me/api/cloudflare.json` for Cloudflare results
-
-`https://ae-geo.redirect2.me/api/appengine.json` for Google AppEngine results
+- [`/api/aws.json`](https://aws-geo.redirect2.me/api/aws.json)
+- [`/api/cloudflare.json`](https://cf-geo.redirect2.me/api/cloudflare.json)
+- [`/api/fastly.json`](https://cdn-geo.global.ssl.fastly.net/api/fastly.json)
+- [`/api/appengine.json`](https://ae-geo.redirect2.me/api/appengine.json)
 
 ## License
 
@@ -48,6 +39,7 @@ Send a `callback` parameter to get JSONP instead of JSON.
 
 [![AWS](https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-ar21.svg)](https://aws.amazon.com/ "CDN and Geolocation")
 [![Cloudflare](https://www.vectorlogo.zone/logos/cloudflare/cloudflare-ar21.svg)](https://www.cloudflare.com/ "CDN and Geolocation")
+[![Fastly](https://www.vectorlogo.zone/logos/fastly/fastly-ar21.svg)](https://www.fastly.com/ "CDN")
 [![Git](https://www.vectorlogo.zone/logos/git-scm/git-scm-ar21.svg)](https://git-scm.com/ "Version control")
 [![Github](https://www.vectorlogo.zone/logos/github/github-ar21.svg)](https://github.com/ "Code hosting")
 [![golang](https://www.vectorlogo.zone/logos/golang/golang-ar21.svg)](https://golang.org/ "Programming language")
@@ -56,3 +48,39 @@ Send a `callback` parameter to get JSONP instead of JSON.
 [![water.css](https://www.vectorlogo.zone/logos/netlifyapp_watercss/netlifyapp_watercss-ar21.svg)](https://watercss.netlify.app/ "Classless CSS")
 
 * togo `go run github.com/flazz/togo --pkg=main --name=faviconIco --input=assets/favicon.ico`
+
+## Provider Setup
+
+The real functionality is from the providers.  Here are links and tips on how to set them up.
+
+### [AWS CloudFront](https://aws.amazon.com/cloudfront/)
+
+[Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
+
+In Behaviors, make sure you have whitelisted the `CloudFront-Viewer-Country` header:
+
+<img alt="cloudfront headers whitelist" src="assets/cloudfront-headers.png" height="287" width="900" />
+
+### [Cloudflare](https://www.cloudflare.com/)
+
+[Official documentation](https://support.cloudflare.com/hc/en-us/articles/200168236-Configuring-Cloudflare-IP-Geolocation)
+
+Very easy to setup: just make sure you have enabled the CloudFlare proxy in your Cloudflare DNS settings.  The little cloud has to be orange:
+
+<img alt="cloudflare proxy enabled" src="assets/cloudflare-proxied.png" height="31" width="175" />
+
+### [Fastly](https://www.fastly.com/)
+
+[Official documentation](https://developer.fastly.com/reference/vcl/variables/geolocation/)
+
+You need to configure each header.
+
+Fastly's free tier only allows http for custom domains.  If you need https, you either have to pay or use the Fastly domain `.global.ssl.fastly.net`.
+
+<!-- LATER: example VCL -->
+
+### [Google AppEngine](https://cloud.google.com/appengine)
+
+[Official documentation](https://cloud.google.com/appengine/docs/standard/go/reference/request-response-headers)
+
+No special setup required, but your app has to be running on Google AppEngine.

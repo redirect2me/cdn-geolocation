@@ -38,6 +38,8 @@ func headersHandler(w http.ResponseWriter, r *http.Request) {
             Your IP address:`))
 
 	fmt.Fprintf(w, "%s", getIpAddress(r))
+	w.Write([]byte(`<br/>Host: `))
+	fmt.Fprintf(w, "%s", r.Host)
 	w.Write([]byte(`</p>
 		<table>
 			<thead>
