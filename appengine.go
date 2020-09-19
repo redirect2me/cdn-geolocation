@@ -5,6 +5,7 @@ import (
 	"html"
 	"net/http"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -63,8 +64,8 @@ type appengineApiResponse struct {
 	Text      string            `json:"text"`
 	Region    string            `json:"region"`
 	City      string            `json:"city"`
-	Latitude  string            `json:"latitude"`
-	Longitude string            `json:"longitude"`
+	Latitude  float32           `json:"latitude"`
+	Longitude float32           `json:"longitude"`
 	Raw       map[string]string `json:"raw"`
 }
 
@@ -84,8 +85,18 @@ func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
 	if latlng != "" {
 		comma := strings.Index(latlng, ",")
 		if comma != -1 {
-			result.Latitude = latlng[0:comma]
-			result.Longitude = latlng[comma:len(latlng)]
+			latitude, latErr := strconv.ParseFloat(latlng[0:comma], 32)
+			if (latErr != nil) {
+				logger.Printf("ERROR: unable to convert '%s' to float: %s", latlng[0:comma], latErr)
+			} else {
+				result.Latitude = float32(latitude)
+			}
+			longitude, lngErr := strconv.ParseFloat(latlng[comma+1:len(latlng)], 32)
+			if (lngErr != nil) {
+				logger.Printf("ERROR: unable to convert '%s' to float: %s", latlng[0:comma], lngErr)
+			} else {
+				result.Longitude = float32(longitude)
+			}
 		}
 	}
 	write_with_callback(w, r, result)
