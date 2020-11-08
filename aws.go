@@ -76,6 +76,7 @@ func awsApiHandler(w http.ResponseWriter, r *http.Request) {
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
 	result.Raw = getFlatHeaders(r, "Cloudfront-")
+	result.Raw["X-Forwarded-For"] = r.Header.Get("X-Forwarded-For")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"

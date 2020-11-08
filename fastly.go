@@ -33,7 +33,7 @@ func fastlyRootHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-Country-Name-Utf8", "(none)")))
 		fmt.Fprintf(w, "Region: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-Region-Utf8", "(none)")))
 		fmt.Fprintf(w, "City: %s<br/>", html.EscapeString(getHeader(r, "X-Fastly-Geo-City-Utf8", "(none)")))
-		fmt.Fprintf(w, "Latitude/Longitude: %s,%s<br/>", 
+		fmt.Fprintf(w, "Latitude/Longitude: %s,%s<br/>",
 			html.EscapeString(getHeader(r, "X-Fastly-Geo-Latitude", "(none)")),
 			html.EscapeString(getHeader(r, "X-Fastly-Geo-Longitude", "(none)")))
 		//LATER: hyperlink to map
@@ -74,6 +74,10 @@ func fastlyApiHandler(w http.ResponseWriter, r *http.Request) {
 	result.Timestamp = time.Now().UTC().Format(time.RFC3339)
 	result.IpAddress = getIpAddress(r)
 	result.Raw = getFlatHeaders(r, "X-Fastly-Geo-")
+	for k, v := range getFlatHeaders(r, "Fastly-") {
+		result.Raw[k] = v
+	}
+	result.Raw["X-Forwarded-For"] = r.Header.Get("X-Forwarded-For")
 
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
