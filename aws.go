@@ -41,7 +41,13 @@ func awsRootHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", getIpAddress(r))
 		fmt.Fprintf(w, "</p><p>")
 
-		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "CloudFront-Viewer-Country", "(none)")))
+		fmt.Fprintf(w, "Country: %s<br/>", html.EscapeString(getHeader(r, "CloudFront-Viewer-Country-Name", "(none)")))
+		fmt.Fprintf(w, "Region: %s<br/>", html.EscapeString(getHeader(r, "CloudFront-Viewer-Country-Region-Name", "(none)")))
+		fmt.Fprintf(w, "City: %s<br/>", html.EscapeString(getHeader(r, "CloudFront-Viewer-City", "(none)")))
+		fmt.Fprintf(w, "Latitude/Longitude: %s,%s<br/>",
+			html.EscapeString(getHeader(r, "CloudFront-Viewer-Latitude", "(none)")),
+			html.EscapeString(getHeader(r, "CloudFront-Viewer-Longitude", "(none)")))
+		//LATER: hyperlink to map
 
 		w.Write([]byte(`</p>
         <p>
@@ -68,6 +74,8 @@ type awsApiResponse struct {
 	IpAddress string            `json:"ip"`
 	Country   string            `json:"country"`
 	Text      string            `json:"text"`
+	Latitude  string            `json:"latitude"`
+	Longitude string            `json:"longitude"`
 	Raw       map[string]string `json:"raw"`
 }
 
@@ -81,5 +89,11 @@ func awsApiHandler(w http.ResponseWriter, r *http.Request) {
 	result.Success = true
 	result.Message = "Free for light, non-commercial use"
 	result.Country = getHeader(r, "CloudFront-Viewer-Country", "(not set)")
+	city := getHeader(r, "CloudFront-Viewer-City", "(not set)")
+	region := getHeader(r, "CloudFront-Viewer-Country-Region-Name", "(not set)")
+	country := getHeader(r, "CloudFront-Viewer-Country-Name", "(not set)")
+	result.Text = fmt.Sprintf("%s, %s, %s", city, region, country)
+	result.Latitude = r.Header.Get("CloudFront-Viewer-Latitude")
+	result.Longitude = r.Header.Get("CloudFront-Viewer-Longitude")
 	write_with_callback(w, r, result)
 }

@@ -21,12 +21,17 @@ It is a trivial go application.  `go run *.go` should work.  The real functional
 <details>
 <summary>AWS CloudFront</summary>
 
-[Website](https://aws.amazon.com/cloudfront/) |
-[Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
+[Website](https://aws.amazon.com/cloudfront/)
+| [Official documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-headers-behavior)
+| [New detailed headers](https://aws.amazon.com/about-aws/whats-new/2020/07/cloudfront-geolocation-headers/)
 
-In Behaviors, make sure you have whitelisted the `CloudFront-Viewer-Country` header:
+CloudFront setup is not for the faint of heart.  I managed to get it done in the end, but it involved a lot of fiddling.  The rough steps are:
 
-<img alt="cloudfront headers whitelist" src="assets/cloudfront-headers.png" height="287" width="900" />
+1. Create a custom caching policy with the `Cloudfront-Viewer-*` headers
+2. Create an origin request policy with the `Cloudfront-Viewer-*` headers
+3. Create the distribution with these policies, making sure all the infinite number of other options are correct
+
+Good luck!
 </details>
 
 <details>
