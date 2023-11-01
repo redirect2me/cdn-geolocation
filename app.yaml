@@ -7,5 +7,5 @@
     "COMMIT": "dev",
     "LASTMOD": "dev",
   },
-  "runtime": "go112"
+  "runtime": "go121"
 }
