@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"html"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -18,6 +18,7 @@ func appengineRootHandler(w http.ResponseWriter, r *http.Request) {
         <title>AppEngine Geolocation - Resolve.rs</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	</head>
     <body>
         <h1>
@@ -86,13 +87,13 @@ func appengineApiHandler(w http.ResponseWriter, r *http.Request) {
 		comma := strings.Index(latlng, ",")
 		if comma != -1 {
 			latitude, latErr := strconv.ParseFloat(latlng[0:comma], 32)
-			if (latErr != nil) {
+			if latErr != nil {
 				logger.Printf("ERROR: unable to convert '%s' to float: %s", latlng[0:comma], latErr)
 			} else {
 				result.Latitude = float32(latitude)
 			}
 			longitude, lngErr := strconv.ParseFloat(latlng[comma+1:len(latlng)], 32)
-			if (lngErr != nil) {
+			if lngErr != nil {
 				logger.Printf("ERROR: unable to convert '%s' to float: %s", latlng[0:comma], lngErr)
 			} else {
 				result.Longitude = float32(longitude)
