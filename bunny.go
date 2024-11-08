@@ -71,6 +71,7 @@ type bunnyApiResponse struct {
 	Country    string            `json:"country"`
 	State      string            `json:"state"`
 	ServerZone string            `json:"serverzone"`
+	Text       string            `json:"text"`
 	Raw        map[string]string `json:"raw"`
 }
 
@@ -85,6 +86,7 @@ func bunnyApiHandler(w http.ResponseWriter, r *http.Request) {
 	result.Country = getHeader(r, "Cdn-Requestcountrycode", "(not set)")
 	result.State = getHeader(r, "Cdn-Requeststatecode", "(not set)")
 	result.ServerZone = getHeader(r, "Cdn-Serverzone", "(not set)")
+	result.Text = fmt.Sprintf("%s, %s", result.State, result.Country)
 
 	write_with_callback(w, r, result)
 }
