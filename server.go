@@ -21,6 +21,7 @@ var (
 	aeHostname     = flag.String("aehost", "ae-geo.redirect2.me", "hostname for AppEngine")
 	cfHostname     = flag.String("cfhost", "cf-geo.redirect2.me", "hostname for Cloudflare")
 	awsHostname    = flag.String("awshost", "origin-aws-geo.redirect2.me", "origin hostname for AWS CloudFront (not the actual hostname)")
+	bunnyHostname  = flag.String("bunnyhost", "origin-bunny-geo.redirect2.me", "origin hostname for Bunny.net (not the actual hostname)")
 	fastlyHostname = flag.String("fastlyhost", "cdn-geo.global.ssl.fastly.net", "hostname for Fastly")
 
 	logger = log.New(os.Stdout, "R2ME-GEO: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.LUTC)
@@ -69,6 +70,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 			fastlyRootHandler(w, r)
 		} else if host == *awsHostname {
 			awsRootHandler(w, r)
+		} else if host == *bunnyHostname {
+			bunnyRootHandler(w, r)
 		} else {
 			logger.Printf("WARN: unknown host '%s'\n", host)
 			http.Redirect(w, r, "https://github.com/redirect2me/cdn-geolocation", http.StatusTemporaryRedirect)
@@ -101,6 +104,7 @@ func main() {
 	http.HandleFunc("/headers.html", headersHandler)
 
 	http.HandleFunc("/api/appengine.json", appengineApiHandler)
+	http.HandleFunc("/api/bunny.json", bunnyApiHandler)
 	http.HandleFunc("/api/cloudflare.json", cloudflareApiHandler)
 	http.HandleFunc("/api/fastly.json", fastlyApiHandler)
 	http.HandleFunc("/api/aws.json", awsApiHandler)

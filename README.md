@@ -4,6 +4,7 @@ Server that determines your physical location by looking at headers sent from va
 
 Try it with:
 [AWS CloudFront](https://aws-geo.redirect2.me/)
+| [Bunny.net](https://bunny-geo.redirect2.me/)
 | [Cloudflare](https://cf-geo.redirect2.me/)
 | [Fastly](https://cdn-geo.global.ssl.fastly.net/)
 | [Google AppEngine](https://ae-geo.redirect2.me/)
@@ -35,6 +36,12 @@ Good luck!
 </details>
 
 <details>
+<details>
+<summary>Bunny.net</summary>
+
+Very easy to setup: Add a [pull zone](https://dash.bunny.net/cdn/add) pointing to your server.  Bunny.net fills in headers for state and country.
+
+</details>
 <summary>Cloudflare</summary>
 
 [Website](https://www.cloudflare.com/) |
@@ -88,6 +95,7 @@ Send a `callback` parameter to get JSONP instead of JSON.
 ## Credits
 
 [![AWS](https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-ar21.svg)](https://aws.amazon.com/ "CDN and Geolocation")
+[![Bunny.net](https://www.vectorlogo.zone/logos/bunnynet/bunnynet-ar21.svg)](https://www.bunny.net/ "CDN and Geolocation")
 [![Cloudflare](https://www.vectorlogo.zone/logos/cloudflare/cloudflare-ar21.svg)](https://www.cloudflare.com/ "CDN and Geolocation")
 [![Fastly](https://www.vectorlogo.zone/logos/fastly/fastly-ar21.svg)](https://www.fastly.com/ "CDN")
 [![Git](https://www.vectorlogo.zone/logos/git-scm/git-scm-ar21.svg)](https://git-scm.com/ "Version control")
