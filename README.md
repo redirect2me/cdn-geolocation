@@ -36,12 +36,13 @@ Good luck!
 </details>
 
 <details>
-<details>
 <summary>Bunny.net</summary>
 
 Very easy to setup: Add a [pull zone](https://dash.bunny.net/cdn/add) pointing to your server.  Bunny.net fills in headers for state and country.
 
 </details>
+
+<details>
 <summary>Cloudflare</summary>
 
 [Website](https://www.cloudflare.com/) |
@@ -50,7 +51,11 @@ Very easy to setup: Add a [pull zone](https://dash.bunny.net/cdn/add) pointing t
 Very easy to setup: just make sure you have enabled the CloudFlare proxy in your Cloudflare DNS settings.  The little cloud has to be orange:
 
 <img alt="cloudflare proxy enabled" src="assets/cloudflare-proxied.png" height="31" width="175" />
+
+NOTE: you can also do geolocation with a Cloudflare Worker: see the [cfw-geolocation](https://github.com/redirect2me/cfw-geolocation) repository for an example.
+
 </details>
+
 <details>
 <summary>Fastly</summary>
 
